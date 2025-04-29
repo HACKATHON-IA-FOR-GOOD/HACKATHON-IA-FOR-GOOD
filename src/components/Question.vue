@@ -38,18 +38,43 @@ const selectOption = (answer) => {
 <style scoped>
 .question-container {
   margin-bottom: 2rem;
+  animation: fadeIn 0.6s ease-out forwards;
 }
 
 .question-text {
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
-  color: var(--color-heading);
+  color: var(--color-text);
   text-align: center;
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.4;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.question-text::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background-color: var(--color-primary);
+  border-radius: 2px;
 }
 
 .options-container {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .question-text {
+    font-size: 1.3rem;
+  }
 }
 </style>
