@@ -45,7 +45,6 @@ export async function generateQuizQuestions(nbQuestions = 10) {
     // L'API retourne le JSON sous forme de texte dans le champ content
     const contentStr = data.choices[0].message.content;
     const quizData = JSON.parse(contentStr);
-    console.log(quizData);
     
     const endTime = performance.now();
     const elapsedTime = ((endTime - startTime) / 1000).toFixed(2);
