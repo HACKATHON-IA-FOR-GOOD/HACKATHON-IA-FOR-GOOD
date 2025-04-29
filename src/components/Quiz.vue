@@ -214,11 +214,27 @@ const restartGame = () => {
           </div>
         </div>
         
-        <div class="loading-progress">
-          <div class="progress-track">
-            <div class="progress-fill" :style="{ width: `${loadingProgress}%` }"></div>
+        <div class="loading-progress-container">
+          <div class="loading-slider">
+            <div class="loading-steps">
+              <div v-for="(message, index) in loadingMessages" :key="index" 
+                class="loading-step" 
+                :class="{'step-active': loadingProgress >= (index + 1) * 16.6}"
+                :style="{ left: `${index * 20}%` }">
+                <div class="step-marker"></div>
+                <div class="step-tooltip">{{ message }}</div>
+              </div>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" :style="{ width: `${loadingProgress}%` }">
+                <div class="progress-handle" :style="{ left: '100%' }"></div>
+              </div>
+            </div>
           </div>
-          <div class="progress-text">{{ loadingProgress }}%</div>
+          <div class="progress-stats">
+            <div class="progress-text">{{ loadingProgress }}% complété</div>
+            <div class="questions-loaded">{{ Math.floor(loadingProgress / 10) }} questions prêtes</div>
+          </div>
         </div>
         
         <div class="loading-info">
@@ -343,9 +359,21 @@ const restartGame = () => {
         </div>
         
         <div class="explanation-body">
-          <p class="explanation-text">
-            {{ currentQuestion.explanation }}
-          </p>
+          <div class="explanation-card">
+            <div class="explanation-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4"></path>
+                <path d="M12 8h.01"></path>
+              </svg>
+            </div>
+            <div class="explanation-content">
+              <h4 class="explanation-subtitle">Le saviez-vous ?</h4>
+              <p class="explanation-text">
+                {{ currentQuestion.explanation }}
+              </p>
+            </div>
+          </div>
           
           <div class="explanation-detail">
             <div class="correct-answer" v-if="userAnswers[currentQuestionIndex] !== currentQuestion.correctAnswer">
@@ -355,7 +383,9 @@ const restartGame = () => {
             
             <div class="your-answer">
               <span class="detail-label">Votre réponse :</span>
-              <span class="detail-value">{{ userAnswers[currentQuestionIndex] }}</span>
+              <span class="detail-value" :class="{'text-success': userAnswers[currentQuestionIndex] === currentQuestion.correctAnswer, 'text-error': userAnswers[currentQuestionIndex] !== currentQuestion.correctAnswer}">
+                {{ userAnswers[currentQuestionIndex] }}
+              </span>
             </div>
           </div>
         </div>
@@ -433,7 +463,207 @@ const restartGame = () => {
   gap: 1.5rem;
 }
 
-/* ... styles de chargement existants ... */
+.loading-message {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.ai-thinking {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.thinking-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+}
+
+.dot1 {
+  animation: bounce 1.4s ease-in-out infinite;
+}
+
+.dot2 {
+  animation: bounce 1.4s ease-in-out 0.2s infinite;
+}
+
+.dot3 {
+  animation: bounce 1.4s ease-in-out 0.4s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.loading-progress-container {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.loading-slider {
+  position: relative;
+  width: 100%;
+  padding: 2rem 0;
+}
+
+.loading-steps {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 30px;
+  z-index: 2;
+}
+
+.loading-step {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.5s ease;
+  transform: translateX(-50%);
+}
+
+.step-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.5s ease;
+  z-index: 3;
+}
+
+.step-tooltip {
+  position: absolute;
+  top: 25px;
+  width: 140px;
+  text-align: center;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 0.75rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.loading-step:hover .step-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.step-active .step-marker {
+  background-color: #4CAF50;
+  transform: scale(1.2);
+}
+
+.progress-track {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 1.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #81C784, #4CAF50);
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+  border-radius: 4px;
+  position: relative;
+  transition: width 0.5s ease;
+}
+
+.progress-handle {
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border: 3px solid #4CAF50;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.progress-handle:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.progress-stats {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.progress-text, .questions-loaded {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.questions-loaded {
+  color: var(--color-primary);
+}
+
+.loading-info {
+  margin-top: 1rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  background-color: rgba(76, 175, 80, 0.05);
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.info-item:hover {
+  transform: translateX(5px);
+}
+
+.info-icon {
+  margin-right: 1rem;
+  font-size: 1.2rem;
+}
+
+.info-text {
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
 
 /* Nouveau style pour le header du quiz avec les statistiques */
 .quiz-content {
@@ -638,65 +868,71 @@ const restartGame = () => {
   padding: 1.5rem;
 }
 
-.explanation-container {
-  padding: 0;
-  background-color: white;
-}
-
-.explanation-header {
-  display: flex;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.correct-header {
-  background-color: rgba(76, 175, 80, 0.1);
-  border-bottom: 1px solid rgba(76, 175, 80, 0.2);
-}
-
-.incorrect-header {
-  background-color: rgba(244, 67, 54, 0.1);
-  border-bottom: 1px solid rgba(244, 67, 54, 0.2);
-}
-
-.result-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 0.75rem;
-}
-
-.correct-header .result-icon {
-  color: var(--color-primary);
-}
-
-.incorrect-header .result-icon {
-  color: #f44336;
-}
-
-.explanation-title {
-  margin-bottom: 0;
-  font-size: 1.1rem;
-}
-
-.correct {
-  color: var(--color-primary);
-}
-
-.incorrect {
-  color: #f44336;
-}
-
 .explanation-body {
   padding: 1.5rem;
   border-bottom: 1px solid #eee;
 }
 
-.explanation-text {
+.explanation-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: linear-gradient(to right, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05));
+  border-left: 4px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 1.2rem;
   margin-bottom: 1.2rem;
-  line-height: 1.6;
-  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: pulse-gentle 2s infinite alternate;
+}
+
+.explanation-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes pulse-gentle {
+  0% { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
+  100% { box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2); }
+}
+
+.explanation-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: rgba(76, 175, 80, 0.15);
+  border-radius: 50%;
+  color: var(--color-primary);
+}
+
+.explanation-content {
+  flex: 1;
+}
+
+.explanation-subtitle {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+}
+
+.explanation-subtitle::before {
+  content: '💡';
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.explanation-text {
+  margin: 0;
+  line-height: 1.7;
+  font-size: 1.05rem;
+  color: var(--color-text);
 }
 
 .explanation-detail {
@@ -724,6 +960,14 @@ const restartGame = () => {
 .detail-value {
   font-weight: 600;
   color: var(--color-text);
+}
+
+.text-success {
+  color: var(--color-primary);
+}
+
+.text-error {
+  color: #f44336;
 }
 
 .next-btn {
@@ -792,6 +1036,19 @@ const restartGame = () => {
   .game-over-stats {
     grid-template-columns: 1fr;
     gap: 1rem;
+  }
+  
+  .loading-steps {
+    display: none;
+  }
+  
+  .loading-progress-container {
+    padding: 0 1rem;
+  }
+  
+  .progress-handle {
+    width: 16px;
+    height: 16px;
   }
 }
 </style>
