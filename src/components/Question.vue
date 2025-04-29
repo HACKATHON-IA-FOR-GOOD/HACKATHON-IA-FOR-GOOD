@@ -105,16 +105,34 @@ const selectOption = (answer) => {
 .options-container > *:nth-child(5) { animation-delay: 0.5s; }
 
 @media (max-width: 600px) {
+  .question-container {
+    gap: 1rem;
+  }
+  
   .question-text {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    line-height: 1.3;
   }
   
   .question-header {
     gap: 0.75rem;
+    padding-bottom: 0.3rem;
   }
   
   .question-icon {
     display: none;
+  }
+  
+  .options-container {
+    gap: 0.6rem;
+  }
+  
+  .question-footer {
+    padding-top: 0.7rem;
+  }
+  
+  .question-tip {
+    font-size: 0.8rem;
   }
 }
 </style>

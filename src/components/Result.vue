@@ -550,4 +550,92 @@ setTimeout(() => {
     font-size: 2.5rem;
   }
 }
+
+/* Améliorations pour mobile */
+@media (max-width: 600px) {
+  .result-container {
+    padding: 1rem;
+  }
+
+  .result-title {
+    font-size: 1.5rem;
+  }
+
+  .result-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .score-card {
+    flex-direction: column;
+    padding: 1.25rem;
+    gap: 1.5rem;
+  }
+
+  .score-circle-container {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+  }
+
+  .score-value-container {
+    justify-content: center;
+  }
+
+  .score-message {
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  .impact-card {
+    flex-direction: column;
+    padding: 1.2rem;
+    align-items: center;
+  }
+
+  .impact-icon {
+    margin-right: 0;
+    margin-bottom: 0.8rem;
+  }
+
+  .impact-title {
+    text-align: center;
+  }
+
+  .impact-text {
+    text-align: center;
+  }
+
+  .next-steps-section {
+    padding: 1.2rem;
+  }
+
+  .next-step-item {
+    padding: 1rem 0.8rem;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 0.7rem 1rem;
+  }
+
+  .eco-tip {
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .tip-icon {
+    margin-right: 0;
+    margin-bottom: 0.8rem;
+  }
+
+  .tip-title, .tip-text {
+    text-align: center;
+  }
+
+  .confetti {
+    width: 6px;
+    height: 12px;
+  }
+}
 </style>

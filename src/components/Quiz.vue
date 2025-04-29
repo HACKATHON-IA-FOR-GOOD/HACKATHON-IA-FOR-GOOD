@@ -868,6 +868,56 @@ const restartGame = () => {
   padding: 1.5rem;
 }
 
+.explanation-container {
+  position: relative;
+}
+
+.explanation-header {
+  padding: 1.5rem 1.5rem 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.correct-header {
+  color: var(--color-primary);
+}
+
+.incorrect-header {
+  color: #f44336;
+}
+
+.result-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(76, 175, 80, 0.1);
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.incorrect-header .result-icon {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+}
+
+.explanation-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.correct {
+  color: var(--color-primary);
+}
+
+.incorrect {
+  color: #f44336;
+}
+
 .explanation-body {
   padding: 1.5rem;
   border-bottom: 1px solid #eee;
@@ -1006,49 +1056,204 @@ const restartGame = () => {
   animation: fadeIn 0.4s ease-out forwards;
 }
 
+/* Améliorations pour mobile */
 @media (max-width: 600px) {
   .quiz-container {
     border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
   }
   
   .quiz-header {
-    padding: 1rem 1.2rem;
+    padding: 0.8rem 1rem;
   }
   
-  .question-wrapper, .explanation-body {
-    padding: 1.2rem;
-  }
-  
-  .next-btn {
-    margin: 1rem 1.2rem;
-    width: calc(100% - 2.4rem);
+  .stats-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
   }
   
   .score-badges {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
     gap: 0.5rem;
   }
   
   .badge {
-    padding: 0.35rem 0.6rem;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+    flex: 1;
+    justify-content: center;
+    min-width: 45%;
+  }
+  
+  .badge-icon {
     font-size: 0.8rem;
   }
   
-  .game-over-stats {
-    grid-template-columns: 1fr;
+  .badge-lives {
+    order: 4;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .life-heart {
+    font-size: 0.9rem;
+  }
+  
+  .question-counter {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .question-wrapper {
+    padding: 1rem;
+  }
+  
+  .explanation-header {
+    padding: 1rem 1rem 0 1rem;
+    gap: 0.8rem;
+  }
+  
+  .result-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .explanation-title {
+    font-size: 1.2rem;
+  }
+  
+  .explanation-body {
+    padding: 1rem;
+  }
+  
+  .explanation-card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    flex-direction: column;
+  }
+  
+  .explanation-icon {
+    margin-bottom: 0.5rem;
+  }
+  
+  .explanation-subtitle {
+    font-size: 1rem;
+  }
+  
+  .explanation-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  
+  .explanation-detail {
+    padding: 0.8rem;
+  }
+  
+  .correct-answer, .your-answer {
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .next-btn {
+    margin: 0.8rem 1rem;
+    width: calc(100% - 2rem);
+    padding: 0.7rem 1rem;
+  }
+  
+  .loading-content {
+    padding: 1rem;
     gap: 1rem;
+  }
+  
+  .loading-message {
+    font-size: 1rem;
+  }
+  
+  .loading-progress-container {
+    gap: 1rem;
+    margin: 1rem 0;
   }
   
   .loading-steps {
     display: none;
   }
   
-  .loading-progress-container {
-    padding: 0 1rem;
+  .progress-track {
+    margin-top: 0;
   }
   
   .progress-handle {
     width: 16px;
     height: 16px;
+  }
+  
+  .info-item {
+    padding: 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  .info-icon {
+    margin-right: 0.7rem;
+    font-size: 1rem;
+  }
+  
+  .info-text {
+    font-size: 0.8rem;
+  }
+  
+  .game-over-header {
+    padding: 1.5rem 1rem;
+  }
+  
+  .game-over-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.7rem;
+  }
+  
+  .game-over-title {
+    font-size: 1.5rem;
+  }
+  
+  .game-over-content {
+    padding: 1.5rem 1rem;
+    gap: 1rem;
+  }
+  
+  .game-over-text {
+    font-size: 1rem;
+  }
+  
+  .game-over-stats {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+  
+  .stat-item {
+    padding: 0.8rem;
+  }
+  
+  .stat-value {
+    font-size: 1.3rem;
+  }
+  
+  .restart-btn, .game-over-btn {
+    width: 100%;
+    padding: 0.7rem 1.2rem;
+  }
+  
+  .error-container {
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .error-message {
+    font-size: 1rem;
   }
 }
 </style>

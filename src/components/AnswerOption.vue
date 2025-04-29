@@ -106,14 +106,33 @@ const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
 
 @media (max-width: 600px) {
   .answer-option {
-    padding: 0.8rem 0.9rem;
+    padding: 0.7rem 0.8rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    gap: 0.5rem;
   }
   
   .option-letter {
-    min-width: 24px;
-    height: 24px;
-    font-size: 0.9rem;
-    margin-right: 0.75rem;
+    min-width: 22px;
+    height: 22px;
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+  }
+  
+  .option-icon {
+    display: none;
+  }
+  
+  .option-text {
+    letter-spacing: 0;
+    line-height: 1.3;
+  }
+  
+  /* Améliore l'expérience de clic sur mobile */
+  .answer-option:active {
+    background-color: rgba(76, 175, 80, 0.15);
+    border-color: var(--color-primary);
+    transform: scale(0.98);
   }
 }
 </style>

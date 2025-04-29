@@ -309,4 +309,107 @@ main {
     max-width: 250px;
   }
 }
+
+/* Amélioration pour mobile */
+@media (max-width: 600px) {
+  .header-container {
+    padding: 1rem 0.8rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .logo-and-title {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .logo-container {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .logo {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .title-large {
+    font-size: 2rem;
+  }
+  
+  .slogan {
+    font-size: 0.9rem;
+  }
+  
+  .eco-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 15px;
+  }
+  
+  .eco-icon {
+    font-size: 1.2rem;
+  }
+  
+  .eco-text {
+    font-size: 0.9rem;
+  }
+  
+  main {
+    padding: 0.8rem;
+  }
+  
+  .welcome-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+    padding: 0 0.5rem;
+  }
+  
+  .message-card {
+    padding: 1rem 0.8rem;
+  }
+  
+  .message-strong {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  
+  .message-secondary {
+    font-size: 0.9rem;
+  }
+  
+  .features-grid {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .feature-item {
+    max-width: 100%;
+    width: 90%;
+  }
+  
+  .start-btn {
+    font-size: 1.1rem;
+    padding: 0.8rem 1.8rem;
+    width: 100%;
+  }
+  
+  .footer {
+    padding: 1.2rem 0.8rem;
+  }
+  
+  .footer-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+  }
+  
+  .copyright {
+    font-size: 0.8rem;
+    padding: 0 1rem;
+  }
+}
 </style>
