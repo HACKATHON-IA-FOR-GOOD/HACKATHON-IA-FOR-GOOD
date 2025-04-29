@@ -80,18 +80,21 @@ const resetQuiz = () => {
 </script>
 
 <template>
-  <div class="quiz-container card">
-    <div v-if="!quizCompleted">
-      <div class="progress-container">
-        <div class="progress-bar">
-          <div class="progress-fill" :style="{ width: `${progressPercentage}%` }"></div>
-        </div>
-        <div class="progress-text">
-          Question {{ currentQuestionIndex + 1 }}/{{ totalQuestions }}
+  <div class="quiz-container">
+    <div v-if="!quizCompleted" class="quiz-content">
+      <div class="quiz-header">
+        <div class="progress-container">
+          <div class="progress-info">
+            <span class="progress-status">Question {{ currentQuestionIndex + 1 }}/{{ totalQuestions }}</span>
+            <span class="progress-percentage">{{ Math.round(progressPercentage) }}% complété</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: `${progressPercentage}%` }"></div>
+          </div>
         </div>
       </div>
       
-      <div v-if="!showExplanation">
+      <div v-if="!showExplanation" class="question-wrapper animate-slide-in">
         <Question 
           :question="currentQuestion.question"
           :options="currentQuestion.options"
@@ -100,21 +103,49 @@ const resetQuiz = () => {
       </div>
       
       <div v-else class="explanation-container animate-fade-in">
-        <h3 class="explanation-title">
-          <span v-if="userAnswers[currentQuestionIndex] === currentQuestion.correctAnswer" class="correct">
-            Correct !
-          </span>
-          <span v-else class="incorrect">
-            Incorrect
-          </span>
-        </h3>
+        <div class="explanation-header" :class="{'correct-header': userAnswers[currentQuestionIndex] === currentQuestion.correctAnswer, 'incorrect-header': userAnswers[currentQuestionIndex] !== currentQuestion.correctAnswer}">
+          <div class="result-icon">
+            <svg v-if="userAnswers[currentQuestionIndex] === currentQuestion.correctAnswer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+          </div>
+          <h3 class="explanation-title">
+            <span v-if="userAnswers[currentQuestionIndex] === currentQuestion.correctAnswer" class="correct">
+              Correct !
+            </span>
+            <span v-else class="incorrect">
+              Incorrect
+            </span>
+          </h3>
+        </div>
         
-        <p class="explanation-text">
-          {{ currentQuestion.explanation }}
-        </p>
+        <div class="explanation-body">
+          <p class="explanation-text">
+            {{ currentQuestion.explanation }}
+          </p>
+          
+          <div class="explanation-detail">
+            <div class="correct-answer" v-if="userAnswers[currentQuestionIndex] !== currentQuestion.correctAnswer">
+              <span class="detail-label">Réponse correcte :</span>
+              <span class="detail-value">{{ currentQuestion.correctAnswer }}</span>
+            </div>
+            
+            <div class="your-answer">
+              <span class="detail-label">Votre réponse :</span>
+              <span class="detail-value">{{ userAnswers[currentQuestionIndex] }}</span>
+            </div>
+          </div>
+        </div>
         
         <button class="btn next-btn" @click="nextQuestion">
-          {{ currentQuestionIndex < totalQuestions - 1 ? 'Question suivante' : 'Voir les résultats' }}
+          <span class="btn-text">{{ currentQuestionIndex < totalQuestions - 1 ? 'Question suivante' : 'Voir les résultats' }}</span>
+          <span class="btn-icon">→</span>
         </button>
       </div>
     </div>
@@ -132,45 +163,101 @@ const resetQuiz = () => {
 .quiz-container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.quiz-content {
+  padding: 0;
+}
+
+.quiz-header {
+  background-color: rgba(76, 175, 80, 0.08);
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(76, 175, 80, 0.2);
 }
 
 .progress-container {
-  margin-bottom: 2rem;
+  margin-bottom: 0;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.progress-status {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.progress-percentage {
+  color: var(--color-grey);
 }
 
 .progress-bar {
   width: 100%;
-  height: 12px;
+  height: 8px;
   background-color: #e0e0e0;
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
   background-color: var(--color-primary);
-  transition: width 0.3s ease;
+  transition: width 0.5s ease;
 }
 
-.progress-text {
-  text-align: right;
-  font-size: 0.9rem;
-  color: var(--color-grey);
+.question-wrapper {
+  padding: 1.5rem;
 }
 
 .explanation-container {
-  background-color: #f5f5f5;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-top: 1.5rem;
-  border-left: 4px solid var(--color-secondary);
+  padding: 0;
+  background-color: white;
+}
+
+.explanation-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.correct-header {
+  background-color: rgba(76, 175, 80, 0.1);
+  border-bottom: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.incorrect-header {
+  background-color: rgba(244, 67, 54, 0.1);
+  border-bottom: 1px solid rgba(244, 67, 54, 0.2);
+}
+
+.result-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+}
+
+.correct-header .result-icon {
+  color: var(--color-primary);
+}
+
+.incorrect-header .result-icon {
+  color: #f44336;
 }
 
 .explanation-title {
-  margin-bottom: 1rem;
-  font-size: 1.3rem;
+  margin-bottom: 0;
+  font-size: 1.1rem;
 }
 
 .correct {
@@ -181,19 +268,87 @@ const resetQuiz = () => {
   color: #f44336;
 }
 
+.explanation-body {
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
 .explanation-text {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
   line-height: 1.6;
+  font-size: 1rem;
+}
+
+.explanation-detail {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0;
+}
+
+.correct-answer, .your-answer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.your-answer {
+  margin-bottom: 0;
+}
+
+.detail-label {
+  font-weight: 500;
+  color: var(--color-grey);
+}
+
+.detail-value {
+  font-weight: 600;
+  color: var(--color-text);
 }
 
 .next-btn {
-  display: block;
-  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem 1.5rem;
+  width: calc(100% - 3rem);
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.next-btn:hover .btn-icon {
+  transform: translateX(4px);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.4s ease-out forwards;
 }
 
 @media (max-width: 600px) {
   .quiz-container {
-    padding: 1.5rem;
+    border-radius: 8px;
+  }
+  
+  .quiz-header {
+    padding: 1rem 1.2rem;
+  }
+  
+  .question-wrapper, .explanation-body {
+    padding: 1.2rem;
+  }
+  
+  .next-btn {
+    margin: 1rem 1.2rem;
+    width: calc(100% - 2.4rem);
   }
 }
 </style>

@@ -5,20 +5,27 @@ const props = defineProps({
   option: {
     type: String,
     required: true
+  },
+  index: {
+    type: Number,
+    required: true
   }
 });
 
 const emit = defineEmits(['select']);
+
+const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
 </script>
 
 <template>
-  <button class="answer-option" @click="emit('select')">
+  <button class="answer-option animate-fade-in" @click="emit('select')">
+    <div class="option-letter">{{ letters[index] }}</div>
+    <span class="option-text">{{ option }}</span>
     <div class="option-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h13M12 5l7 7-7 7"></path>
       </svg>
     </div>
-    <span class="option-text">{{ option }}</span>
   </button>
 </template>
 
@@ -26,48 +33,87 @@ const emit = defineEmits(['select']);
 .answer-option {
   display: flex;
   align-items: center;
-  padding: 1rem 1.25rem;
-  border: 2px solid var(--color-grey);
+  padding: 0.9rem 1rem;
+  border: 1.5px solid #e0e0e0;
   border-radius: 10px;
   background-color: white;
-  font-size: 1.1rem;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   text-align: left;
   width: 100%;
   color: var(--color-text);
+  position: relative;
+  opacity: 0;
+  animation: fadeIn 0.4s ease-out forwards;
 }
 
-.option-icon {
+.option-letter {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  color: var(--color-grey);
+  font-weight: 600;
   margin-right: 1rem;
-  color: var(--color-secondary);
-  opacity: 0.7;
   transition: all 0.3s ease;
-  width: 24px;
-  height: 24px;
+  flex-shrink: 0;
 }
 
 .option-text {
   flex: 1;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+}
+
+.option-icon {
+  margin-left: 0.5rem;
+  color: var(--color-primary);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
 }
 
 .answer-option:hover {
-  background-color: rgba(76, 175, 80, 0.1);
+  background-color: rgba(76, 175, 80, 0.08);
   border-color: var(--color-primary);
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.answer-option:hover .option-letter {
+  background-color: var(--color-primary);
+  color: white;
+}
+
 .answer-option:hover .option-icon {
-  color: var(--color-primary);
   opacity: 1;
+  transform: translateX(0);
 }
 
 .answer-option:active {
-  transform: translateY(-1px);
+  transform: translateY(0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .answer-option {
+    padding: 0.8rem 0.9rem;
+  }
+  
+  .option-letter {
+    min-width: 24px;
+    height: 24px;
+    font-size: 0.9rem;
+    margin-right: 0.75rem;
+  }
 }
 </style>
