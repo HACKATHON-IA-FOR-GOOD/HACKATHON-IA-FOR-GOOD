@@ -17,6 +17,11 @@ const questionsCompleted = ref(0);
 const questionsPerBatch = 10; // Nombre de questions à charger par lot
 const preloadThreshold = 3; // Précharger quand il reste ce nombre de questions
 
+// Système de vies
+const maxLives = 3;
+const lives = ref(maxLives); // 3 vies au départ
+const gameOver = ref(false); // Indique si le jeu est terminé
+
 // État de chargement
 const loadingProgress = ref(0);
 const loadingMessage = ref('Préparation des questions...');
@@ -138,12 +143,23 @@ const submitAnswer = (answer) => {
     correctAnswers.value++;
   } else {
     incorrectAnswers.value++;
+    
+    // Décrémenter le nombre de vies si la réponse est incorrecte
+    lives.value--;
+    
+    // Vérifier si le joueur n'a plus de vies
+    if (lives.value <= 0) {
+      gameOver.value = true;
+    }
   }
   
   showExplanation.value = true;
 };
 
 const nextQuestion = async () => {
+  // Si le jeu est terminé, ne pas passer à la question suivante
+  if (gameOver.value) return;
+  
   showExplanation.value = false;
   
   // Incrémenter le compteur de questions complétées
@@ -161,6 +177,19 @@ const nextQuestion = async () => {
       console.error('Erreur lors du préchargement de nouvelles questions:', err);
     }
   }
+};
+
+// Réinitialiser le jeu pour recommencer
+const restartGame = () => {
+  // Réinitialiser toutes les variables du jeu
+  currentQuestionIndex.value = 0;
+  userAnswers.value = [];
+  correctAnswers.value = 0;
+  incorrectAnswers.value = 0;
+  questionsCompleted.value = 0;
+  showExplanation.value = false;
+  lives.value = maxLives;
+  gameOver.value = false;
 };
 </script>
 
@@ -211,6 +240,41 @@ const nextQuestion = async () => {
       <p class="error-description">Pas d'inquiétude, nous avons préparé des questions de secours pour vous.</p>
     </div>
 
+    <div v-else-if="gameOver" class="game-over-container animate-fade-in">
+      <div class="game-over-header">
+        <div class="game-over-icon">💔</div>
+        <h2 class="game-over-title">Fin du jeu !</h2>
+      </div>
+      
+      <div class="game-over-content">
+        <p class="game-over-text">Vous avez épuisé vos 3 vies.</p>
+        
+        <div class="game-over-stats">
+          <div class="stat-item">
+            <div class="stat-label">Questions complétées</div>
+            <div class="stat-value">{{ questionsCompleted }}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Réponses correctes</div>
+            <div class="stat-value">{{ correctAnswers }}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Réponses incorrectes</div>
+            <div class="stat-value">{{ incorrectAnswers }}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Taux de réussite</div>
+            <div class="stat-value">{{ successRate }}%</div>
+          </div>
+        </div>
+        
+        <button class="btn restart-btn" @click="restartGame">
+          <span class="btn-icon">🔄</span>
+          <span class="btn-text">Recommencer</span>
+        </button>
+      </div>
+    </div>
+
     <div v-else class="quiz-content">
       <div class="quiz-header">
         <div class="stats-container">
@@ -227,10 +291,19 @@ const nextQuestion = async () => {
               <div class="badge badge-success-rate" :style="{'--success-rate': successRate + '%'}">
                 <span class="badge-text">{{ successRate }}%</span>
               </div>
+              
+              <!-- Affichage des vies -->
+              <div class="badge badge-lives">
+                <span class="lives-display">
+                  <span v-for="n in maxLives" :key="n" class="life-heart" :class="{ 'lost': n > lives }">
+                    {{ n <= lives ? '❤️' : '🖤' }}
+                  </span>
+                </span>
+              </div>
             </div>
             <div class="question-counter">
               <span class="counter-text">Question {{ questionsCompleted + 1 }}</span>
-              <span class="infinite-badge">∞ Quiz infini</span>
+              <span class="limited-badge">{{ maxLives }} vies</span>
             </div>
           </div>
         </div>
@@ -263,6 +336,8 @@ const nextQuestion = async () => {
             </span>
             <span v-else class="incorrect">
               Incorrect
+              <span class="lives-lost" v-if="lives > 0">(-1 vie)</span>
+              <span class="lives-lost" v-else>(Plus de vies !)</span>
             </span>
           </h3>
         </div>
@@ -285,9 +360,14 @@ const nextQuestion = async () => {
           </div>
         </div>
         
-        <button class="btn next-btn" @click="nextQuestion">
+        <button v-if="!gameOver" class="btn next-btn" @click="nextQuestion">
           <span class="btn-text">Question suivante</span>
           <span class="btn-icon">→</span>
+        </button>
+        
+        <button v-else class="btn game-over-btn" @click="restartGame">
+          <span class="btn-icon">🔄</span>
+          <span class="btn-text">Recommencer</span>
         </button>
       </div>
     </div>
@@ -416,6 +496,44 @@ const nextQuestion = async () => {
   line-height: 1;
 }
 
+.badge-lives {
+  background-color: rgba(233, 30, 99, 0.15);
+  color: #e91e63;
+}
+
+.lives-display {
+  display: flex;
+  align-items: center;
+}
+
+.life-heart {
+  margin: 0 1px;
+  transition: all 0.3s ease;
+}
+
+.life-heart.lost {
+  opacity: 0.7;
+  transform: scale(0.85);
+}
+
+.lives-lost {
+  font-size: 0.85rem;
+  color: #f44336;
+  margin-left: 0.5rem;
+  font-weight: normal;
+}
+
+.limited-badge {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e91e63;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
 .question-counter {
   display: flex;
   flex-direction: column;
@@ -429,15 +547,91 @@ const nextQuestion = async () => {
   color: var(--color-text);
 }
 
-.infinite-badge {
-  display: inline-flex;
+.game-over-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  min-height: 350px;
+}
+
+.game-over-header {
+  background-color: rgba(244, 67, 54, 0.1);
+  padding: 2rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(244, 67, 54, 0.2);
+}
+
+.game-over-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  animation: pulse 1.5s infinite alternate;
+}
+
+.game-over-title {
+  margin: 0;
+  color: #f44336;
+  font-size: 1.8rem;
+}
+
+.game-over-content {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  background-color: var(--color-primary);
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 0.8rem;
+  gap: 1.5rem;
+}
+
+.game-over-text {
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 0;
+}
+
+.game-over-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.stat-item {
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--color-grey);
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.restart-btn, .game-over-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #f44336;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.restart-btn:hover, .game-over-btn:hover {
+  background-color: #d32f2f;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
 }
 
 .question-wrapper {
@@ -593,6 +787,11 @@ const nextQuestion = async () => {
   .badge {
     padding: 0.35rem 0.6rem;
     font-size: 0.8rem;
+  }
+  
+  .game-over-stats {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }
 </style>
