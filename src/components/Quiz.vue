@@ -14,6 +14,7 @@ const showExplanation = ref(false);
 const isLoading = ref(true);
 const error = ref(null);
 const questionsCompleted = ref(0);
+const totalAnswered = ref(0); // Nouveau compteur pour le total des questions répondues
 const questionsPerBatch = 10; // Nombre de questions à charger par lot
 const preloadThreshold = 3; // Précharger quand il reste ce nombre de questions
 
@@ -67,8 +68,8 @@ const currentQuestion = computed(() => {
 
 // Taux de réussite en pourcentage
 const successRate = computed(() => {
-  if (questionsCompleted.value === 0) return 0;
-  return Math.round((correctAnswers.value / questionsCompleted.value) * 100);
+  if (totalAnswered.value === 0) return 0;
+  return Math.round((correctAnswers.value / totalAnswered.value) * 100);
 });
 
 // Chargement initial des questions
@@ -137,6 +138,7 @@ async function loadMoreQuestions() {
 // Actions
 const submitAnswer = (answer) => {
   userAnswers.value[currentQuestionIndex.value] = answer;
+  totalAnswered.value++; // Incrémenter le compteur de questions répondues
   
   // Mettre à jour les compteurs de réponses correctes/incorrectes
   if (answer === currentQuestion.value.correctAnswer) {
@@ -187,6 +189,7 @@ const restartGame = () => {
   correctAnswers.value = 0;
   incorrectAnswers.value = 0;
   questionsCompleted.value = 0;
+  totalAnswered.value = 0; // Réinitialiser le compteur de questions répondues
   showExplanation.value = false;
   lives.value = maxLives;
   gameOver.value = false;
@@ -649,6 +652,7 @@ const restartGame = () => {
   background-color: rgba(76, 175, 80, 0.05);
   border-radius: 8px;
   transition: transform 0.3s ease;
+  justify-content: center;
 }
 
 .info-item:hover {
